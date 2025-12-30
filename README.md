@@ -1,9 +1,66 @@
-Unique Collatz RNG (Random Number Generator)Bu proje, matematik dünyasının ünlü Collatz Sanısı (3n+1) üzerine kurulu, yüksek varyanslı ve dinamik aralıklı bir rastsal sayı üretim algoritmasıdır. Geleneksel zaman tabanlı üreticilerin aksine, sistem kimliği (PID) ve nanosaniye hassasiyetinde entropi kullanarak her çalıştırmada benzersiz sonuçlar üretir.
-🚀 Öne Çıkan ÖzelliklerÇift Katmanlı Tohumlama: Sadece zamanı değil, işletim sistemi süreç kimliğini (PID) kullanarak çakışmaları (collision) engeller.Dinamik Aralık Belirleme: Üretilecek sayıların alt ve üst sınırları sabit değildir; tohum değerine göre her seferinde yeniden hesaplanır.Bit-Sarmal (Bit-Spiral) Mantığı: Sayı üretimi, Collatz döngüsü sırasında oluşan tek/çift durumlarının bit düzeyinde bir havuzda toplanmasıyla gerçekleşir.Sonsuz Döngü Kırıcı: Collatz dizisi 1'e ulaştığında "sarsıntı" (shake) mekanizması ile duraganlığı engeller.
-🛠 Algoritma Nasıl Çalışır?Algoritma temel olarak 5 ana adımdan oluşur:1. Benzersiz Tohum (Seeding) OluşturmaSistemden alınan nanosaniye bazlı zaman verisi (perf_counter_ns) ile o anki işlemin kimlik numarası (PID) XOR (^) işlemine sokulur.$$Seed = (Time_{ns} \oplus PID) \pmod{100,000}$$Bu sayede aynı nanosaniyede çalışan iki farklı işlem bile farklı sonuçlar üretir.2. Dinamik Aralık HesaplamaAlgoritma, çıktı aralığını (min_val ve max_val) başlangıç tohumuna göre şu şekilde belirler:Min: 10 ile 60 arasında rastsal.Max: Min değerinin üzerine 550 ile 1550 arasında bir fark ekleyerek.3. Collatz Döngüsü ve Bit ToplamaHer bir sayı için 16 adımlık bir döngü başlatılır. Her adımda Collatz kuralı uygulanır:$$f(n) = \begin{cases} n/2 & n \text{ çift ise} \\ 3n+1 & n \text{ tek ise} \end{cases}$$Sayı tek ise havuzun sonuna 1 biti eklenir.Sayı çift ise havuzun sonuna 0 biti eklenir.Bitler matematiksel olarak sola kaydırma (<<) yöntemiyle bit_pool içinde biriktirilir.4. Modüler Haritalama (Mapping)16 adım sonunda oluşan devasa bit_pool değeri, modulo operatörü kullanılarak kullanıcının dinamik aralığına izdüşürülür:$$Sonuç = (BitPool \pmod{Aralık Boyutu}) + MinValue$$5. Zincirleme Reaksiyon (State Update)Bir sonraki sayı üretilirken bir önceki döngüden kalan son durum ve biriken bit havuzu toplanarak yeni bir durum (state) oluşturulur. Bu, üretilen sayıların birbirine bağımlı ve tahmin edilemez olmasını sağlar.
-💻 Kurulum ve KullanımGereksinimlerPython 3.xos ve time standart kütüphaneleriÇalıştırmaPython# Sınıfı başlat
+# Unique Collatz Random Number Generator (RNG)
+
+Bu proje, matematiksel **Collatz Sanısı** (3n+1 problemi) mantığını temel alan, sistem entropisiyle güçlendirilmiş özgün bir rastgele sayı üretme algoritmasıdır. Standart kütüphanelerden bağımsız olarak, sayısal kaos ve bit manipülasyonu ile benzersiz sonuçlar üretir.
+
+---
+
+## 🛠 Algoritma Mimarisi
+
+Algoritma, deterministik bir matematiksel süreci (Collatz), sistemden gelen rastgelelik (Entropy) ile birleştirir. Süreç şu adımlardan oluşur:
+
+### 1. Benzersiz Tohumlama (Unique Seeding)
+Sıradan üreteçlerin aksine, tohum değeri sadece zamana bağlı değildir:
+* **Nanosaniye Hassasiyeti:** `time.perf_counter_ns()` ile en küçük zaman birimi alınır.
+* **Sistem Kimliği (PID):** İşletim sistemi tarafından atanan Process ID (İşlem Kimliği) kullanılır.
+* **XOR İşlemi:** Bu iki değer XOR'lanarak aynı saniye içinde çalışan farklı işlemlerin aynı sonucu üretmesi engellenir.
+
+### 2. Dinamik Aralık Belirleme
+Algoritma sadece sayı üretmez, her çalışmada çıktıların bulunacağı **[Min, Max]** aralığını da başlangıçtaki tohum değerine bağlı olarak dinamik bir şekilde yeniden hesaplar.
+
+### 3. Collatz Motoru ve Bit Hasadı
+Her sayı üretimi için 16 adımlık bir döngü kurulur:
+* Sayı **Tek** ise: $3n + 1$
+* Sayı **Çift** ise: $n / 2$ işlemi uygulanır.
+
+
+
+Bu işlemler sırasında oluşan tek/çift durumu, bir **Bit Havuzu (Bit Pool)** içinde toplanır. Bu yöntem, sayının matematiksel geçmişini bir "parmak izi" olarak saklayarak sonucu belirler.
+
+### 4. Döngü Kırıcı (Loop Breaker)
+Collatz dizisi 1'e ulaştığında normalde $4 \to 2 \to 1$ döngüsüne girer. Algoritma bunu tespit ederek `PID` ve `adım sayısı` ile duruma müdahale eder (**Jitter/Sarsıntı**) ve kaosun sürekliliğini sağlar.
+
+### 5. Zincirleme Reaksiyon (State Chaining)
+Üretilen her sayı, bir sonraki sayının başlangıç durumunu (state) doğrudan etkiler. Bu sayede üretilen sayılar dizisi arasında karmaşık bir bağımlılık kurulur ve tahmin edilebilirlik en aza indirilir.
+
+---
+
+## 💻 Kullanım Örneği
+
+Sınıfı projenize dahil ettikten sonra aşağıdaki şekilde çağırabilirsiniz:
+
+```python
+# Sınıfı başlatma
 rng = UniqueCollatzRNG()
 
-# 5 adet benzersiz sayı üret ve analizini gör
-rng.generate(5)
-📊 Örnek Çıktı AnaliziKod çalıştığında aşağıdaki gibi detaylı bir izleme paneli sunar:Sistem Kimliği (PID): İşlemin hangi process üzerinden çalıştığı.Bit Katkısı: Her Collatz adımında hangi bitin (0 veya 1) havuzuna eklendiği.Nihai Sonuç: Karmaşık işlemlerden sonra ortaya çıkan temiz tam sayı.
+# 3 adet analizli sayı üretme
+rng.generate(3)
+📋 Teknik Detaylar
+Dil: Python 3.x
+
+Kütüphaneler: os, time
+
+Bit Genişliği: 16-bit (Havuza dayalı üretim)
+
+Modüler Yapı: Her üretim adımında tam analiz ve loglama imkanı sunar.
+
+👤 Geliştirici
+Ad Soyad: Erhan Varğın
+
+Öğrenci No: 230541087
+
+
+---
+
+Bu README dosyası projenin mantığını hem teknik hem de akademik olarak çok iyi özetleyecektir. 
+
+**İstersen bu algoritmanın çıktılarını bir grafik (scatter plot) üzerinde görselleş

@@ -1,6 +1,6 @@
 # Unique Collatz Random Number Generator (RNG)
 
-Bu proje, matematiksel **Collatz Sanısı** (3n+1 problemi) mantığını temel alan, sistem entropisiyle güçlendirilmiş özgün bir rastgele sayı üretme algoritmasıdır. Standart kütüphanelerden bağımsız olarak, sayısal kaos ve bit manipülasyonu ile benzersiz sonuçlar üretir.
+Bu proje, matematiksel **Collatz Sanısı** (3n+1 problemi) mantığını temel alan, sistem entropisiyle güçlendirilmiş  bir rastgele sayı üretme algoritmasıdır. Standart kütüphanelerden bağımsız olarak, sayısal kaos ve bit manipülasyonu ile benzersiz sonuçlar üretir.
 
 ---
 

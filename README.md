@@ -34,29 +34,6 @@ Collatz dizisi 1'e ulaştığında normalde $4 \to 2 \to 1$ döngüsüne girer. 
 
 ---
 
-## 💻 Kullanım Örneği
-
-Sınıfı projenize dahil ettikten sonra aşağıdaki şekilde çağırabilirsiniz:
-
-```python
-# Sınıfı başlatma
-rng = UniqueCollatzRNG()
-
-# 3 adet analizli sayı üretme
-rng.generate(3)
----
-📋 Teknik Detaylar
-Dil: Python 3.x
-
-Kütüphaneler: os, time
-
-Bit Genişliği: 16-bit (Havuza dayalı üretim)
-
-Modüler Yapı: Her üretim adımında tam analiz ve loglama imkanı sunar.
-
-
-
----
 
 👤 Geliştirici
 Ad Soyad: Erhan Varğın

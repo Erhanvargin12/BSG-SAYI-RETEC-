@@ -1,12 +1,12 @@
 # Collatz XOR-Blending Random Number Generator (RNG)
 
-Bu proje, ünlü **Collatz Sanısı ($3n + 1$)** üzerine inşa edilmiş, kriptografik yaklaşımlardan ilham alan özgün bir rastgele sayı üretme algoritmasıdır.
+Bu proje, ünlü **Collatz Sanısı ($3n + 1$)** üzerine inşa edilmiş, kriptografik yaklaşımlardan ilham alan  bir rastgele sayı üretme algoritmasıdır.
 
 Standart ve basit yöntemlerin (örn. rakamları metin olarak yan yana dizmek) aksine, bu algoritma sayıları **XOR (Özel Veya)** mantığıyla matematiksel olarak harmanlayarak daha yüksek kaliteli bir rastgelelik (entropi) sağlar.
 
 ---
 
-## 🚀 Algoritma Özellikleri
+##  Algoritma Özellikleri
 
 * **Dinamik Tohumlama (Seeding):** Sistem saatinin mikrosaniye hassasiyetini kullanarak her çalıştırmada tahmin edilemez benzersiz bir başlangıç noktası belirler.
 * **Kaotik Yörünge Analizi:** Collatz sanısının öngörülemez iniş-çıkış yörüngelerini temel entropi kaynağı olarak kullanır.
@@ -15,7 +15,7 @@ Standart ve basit yöntemlerin (örn. rakamları metin olarak yan yana dizmek) a
 
 ---
 
-## 🛠 Çalışma Mantığı
+##  Çalışma Mantığı
 
 Algoritma temel olarak 4 ana adımdan oluşur:
 
@@ -38,7 +38,7 @@ Bir sonraki sayı üretimi için mevcut durum, son üretilen sayıyla harmanlana
 
 ---
 
-## 💻 Kullanım (Python Örneği)
+##  Kullanım (Python Örneği)
 
 ```python
 # Sınıfı başlat (Örn: 10 ile 250 arasında sayılar üret)
@@ -47,3 +47,4 @@ rng = SimpleCollatzRNG(min_val=10, max_val=250)
 # Rastgele sayı üret
 sayi = rng.generate()
 print(f"Üretilen Sayı: {sayi}")
+Geliştiren: Erhan Vargin Öğrenci No: 230541087

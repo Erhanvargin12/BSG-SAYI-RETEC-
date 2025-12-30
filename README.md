@@ -4,7 +4,7 @@ Bu proje, matematiksel **Collatz Sanısı** (3n+1 problemi) mantığını temel 
 
 ---
 
-## 🛠 Algoritma Mimarisi
+##  Algoritma Mimarisi
 
 Algoritma, deterministik bir matematiksel süreci (Collatz), sistemden gelen rastgelelik (Entropy) ile birleştirir. Süreç şu adımlardan oluşur:
 
@@ -44,6 +44,7 @@ rng = UniqueCollatzRNG()
 
 # 3 adet analizli sayı üretme
 rng.generate(3)
+---
 📋 Teknik Detaylar
 Dil: Python 3.x
 
@@ -53,14 +54,12 @@ Bit Genişliği: 16-bit (Havuza dayalı üretim)
 
 Modüler Yapı: Her üretim adımında tam analiz ve loglama imkanı sunar.
 
+
+
+---
+
 👤 Geliştirici
 Ad Soyad: Erhan Varğın
 
 Öğrenci No: 230541087
 
-
----
-
-Bu README dosyası projenin mantığını hem teknik hem de akademik olarak çok iyi özetleyecektir. 
-
-**İstersen bu algoritmanın çıktılarını bir grafik (scatter plot) üzerinde görselleş

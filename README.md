@@ -1,50 +1,13 @@
-# Collatz XOR-Blending Random Number Generator (RNG)
+Collatz Bit-Sarmal (Bit-Spiral) RNGBu proje, ünlü Collatz Sanısı ($3n + 1$) üzerine inşa edilmiş, kriptografik yaklaşımlardan ilham alan özgün bir rastgele sayı üretme algoritmasıdır. Algoritma, sayıları metin olarak yan yana dizmek yerine, yörünge üzerindeki tek/çift karakterini Bitwise (Bit düzeyinde) işlemlerle harmanlayarak yüksek kaliteli bir entropi havuzu oluşturur.🌟 Öne Çıkan ÖzelliklerDinamik Entropi Kaynağı: Tohum (seed), sadece sistem saatinden değil, aynı zamanda nanosaniye hassasiyeti ve İşlem Kimliği (PID) ile XORlanarak üretilir; bu sayede aynı anda çalışan iki programın çakışması engellenir.Bit-Sarmal Biriktirme: Her Collatz adımındaki bit (0 veya 1), birikimli bir havuzda sola kaydırılarak işlenir. Bu, matematiksel olarak çok daha karmaşık bir yapı sağlar.Anti-Döngü Mekanizması: Collatz dizisinin bilinen $4-2-1$ döngüsüne girmesi durumunda, PID ve adım sayısını içeren bir "sarsıntı" (jump) fonksiyonu ile döngü kırılır.Zincirleme Reaksiyon: Üretilen her sayı, bir sonraki sayının başlangıç durumunu (state) etkileyerek tahmin edilebilirliği zorlaştırır.🛠️ Algoritma Çalışma AdımlarıAlgoritma şu 5 temel aşamada çalışır:1. Sistem Hazırlığı ve Dinamik TohumlamaProgram başladığında nanosaniye düzeyinde zaman (time.perf_counter_ns()) ve işletim sistemi işlem numarası (os.getpid()) alınarak benzersiz bir tohum oluşturulur. Bu tohum üzerinden her çalışmada farklılık gösteren bir Alt Sınır ve Üst Sınır hesaplanır.2. Collatz Yörünge Analizi (16 Adım)Mevcut durum üzerinden 16 adımlık bir Collatz döngüsü başlatılır:Sayı çift ise: $n = n / 2$ işlemi yapılır ve bit = 0 atanır.Sayı tek ise: $n = 3n + 1$ işlemi yapılır ve bit = 1 atanır.3. Bit-Sarmal BiriktirmeElde edilen her bit, bit_pool adı verilen havuzda şu işlemle biriktirilir:$$bit\_pool = (bit\_pool \ll 1) \ | \ bit$$Bu yöntem, bitleri matematiksel olarak birleştirerek devasa bir ikilik sayı oluşturur.4. Kaotik Döngü KırıcıEğer Collatz dizisi 1 değerine ulaşırsa, algoritmanın kilitlenmemesi için şu formül ile "sıçrama" yapılır:$$temp\_state = (temp\_state + adim \times 13) \oplus PID$$Bu işlem, diziyi tekrar kaotik bölgeye fırlatır.5. Aralığa Sığdırma ve ÇıktıBiriken bit_pool, kullanıcının belirlediği aralığa modülo işlemi ile sığdırılır ve nihai sonuç elde edilir.💻 Örnek Çıktı FormatıAlgoritma çalışırken her adımı detaylı analiz ederek kullanıcıya sunar:PlaintextDinamik Aralık: [10 - 550]
+Sistem Kimliği (PID): 1234 | Başlangıç Tohumu: 45678
 
-Bu proje, ünlü **Collatz Sanısı ($3n + 1$)** üzerine inşa edilmiş, kriptografik yaklaşımlardan ilham alan  bir rastgele sayı üretme algoritmasıdır.
+>>> 1. ÜRETİLEN SAYI ANALİZİ:
+    [ADIM] | [DEĞER] | [DURUM] | [BİT KATKISI]
+    01.    | 45678   | ÇİFT    | + 0
+    02.    | 22839   | TEK     | + 1
+    ...
+    ==> NİHAİ SONUÇ: 342
 
-Standart ve basit yöntemlerin (örn. rakamları metin olarak yan yana dizmek) aksine, bu algoritma sayıları **XOR (Özel Veya)** mantığıyla matematiksel olarak harmanlayarak daha yüksek kaliteli bir rastgelelik (entropi) sağlar.
+Geliştiren: Erhan Vargin
 
----
-
-##  Algoritma Özellikleri
-
-* **Dinamik Tohumlama (Seeding):** Sistem saatinin mikrosaniye hassasiyetini kullanarak her çalıştırmada tahmin edilemez benzersiz bir başlangıç noktası belirler.
-* **Kaotik Yörünge Analizi:** Collatz sanısının öngörülemez iniş-çıkış yörüngelerini temel entropi kaynağı olarak kullanır.
-* **XOR-Blending Tekniği:** Sayı dizilerini bit düzeyinde işleyerek matematiksel bir havuzda harmanlar. Bu, "string birleştirme" yönteminden çok daha profesyoneldir.
-* **Döngü Koruması:** Algoritmanın bilinen $4-2-1$ döngüsüne hapsolmasını engelleyen mekanizmalara sahiptir.
-
----
-
-##  Çalışma Mantığı
-
-Algoritma temel olarak 4 ana adımdan oluşur:
-
-### 1. Başlatma (Initialization)
-Sistemden alınan hassas zaman verisiyle bir başlangıç durumu (`state`) oluşturulur ve kullanıcının istediği aralık (`min`, `max`) belirlenir.
-
-### 2. Collatz Döngüsü ve Harmanlama
-Belirli bir adım sayısı boyunca (örn. 8 adım) Collatz kuralı uygulanır:
-* Sayı çiftse: $n = n / 2$
-* Sayı tekse: $n = 3n + 1$
-
-Her adımda elde edilen yeni değer, bir **`xor_sum`** (XOR Toplamı) değişkeni üzerinde **Bitwise XOR** işlemiyle biriktirilir. Bu işlem, önceki sayıların "izlerini" birbirine karıştırır.
-
-### 3. Aralığa Sığdırma (Mapping)
-Oluşan karmaşık `xor_sum` değeri, hedeflenen aralığa sığdırılmak için modülo işlemine tabi tutulur:
-$$Sonuc = (xor\_sum \pmod{Aralik\_Boyutu}) + Min$$
-
-### 4. Durum Güncelleme
-Bir sonraki sayı üretimi için mevcut durum, son üretilen sayıyla harmanlanarak güncellenir (Zincirleme Etki).
-
----
-
-##  Kullanım (Python Örneği)
-
-```python
-# Sınıfı başlat (Örn: 10 ile 250 arasında sayılar üret)
-rng = SimpleCollatzRNG(min_val=10, max_val=250)
-
-# Rastgele sayı üret
-sayi = rng.generate()
-print(f"Üretilen Sayı: {sayi}")
-Geliştiren: Erhan Vargin Öğrenci No: 230541087
+Öğrenci No: 230541087
